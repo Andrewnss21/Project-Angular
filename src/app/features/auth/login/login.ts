@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -13,8 +14,15 @@ export class LoginComponent {
   password = '';
   rol: 'docente' | 'representante' = 'docente';
 
+  constructor(private router: Router) {}
+
   onLogin() {
-    console.log('Login:', this.email, this.rol);
-    // Aquí conectaremos el backend más adelante
+    if (!this.email || !this.password) return;
+
+    if (this.rol === 'docente') {
+      this.router.navigate(['/teacher/dashboard']);
+    } else {
+      this.router.navigate(['/parent/dashboard']);
+    }
   }
 }
