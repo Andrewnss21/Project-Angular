@@ -10,14 +10,14 @@ import { Router } from '@angular/router';
   templateUrl: './login.html',
 })
 export class LoginComponent {
-  email = '';
+  username = '';
   password = '';
   rol: 'docente' | 'representante' = 'docente';
 
   constructor(private router: Router) {}
 
   onLogin() {
-    if (!this.email || !this.password) return;
+    if (!this.username || !this.password) return;
 
     if (this.rol === 'docente') {
       this.router.navigate(['/teacher/dashboard']);
