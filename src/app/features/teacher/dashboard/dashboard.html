@@ -1,19 +1,93 @@
+<!-- Tarjetas de métricas dinámicas -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-  <div *ngFor="let card of statCards"
-       class="bg-white rounded-xl border border-gray-100 p-5">
-    <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">{{ card.label }}</p>
-    <p class="text-2xl font-semibold text-gray-800 mt-1">{{ card.value }}</p>
-    <p class="text-xs mt-1" [class]="card.positive ? 'text-green-500' : 'text-red-400'">
-      {{ card.trend }}
-    </p>
+
+  <div class="bg-white rounded-xl border border-gray-100 p-5">
+    <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Total estudiantes</p>
+    <p class="text-2xl font-semibold text-gray-800 mt-1">{{ totalStudents() }}</p>
+    <p class="text-xs mt-1 text-gray-400">Curso 3ro "A"</p>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-100 p-5">
+    <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Presentes hoy</p>
+    <p class="text-2xl font-semibold text-gray-800 mt-1">{{ presentToday() }}</p>
+    <p class="text-xs mt-1 text-green-500">{{ attendanceRate() }}% de asistencia</p>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-100 p-5">
+    <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Ausentes hoy</p>
+    <p class="text-2xl font-semibold text-gray-800 mt-1">{{ absentToday() }}</p>
+    <p class="text-xs mt-1 text-red-400">{{ 100 - attendanceRate() }}% inasistencia</p>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-100 p-5">
+    <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Promedio general</p>
+    <p class="text-2xl font-semibold text-gray-800 mt-1">8.4</p>
+    <p class="text-xs mt-1 text-green-500">↑ 0.2 vs mes anterior</p>
+  </div>
+
+</div>
+
+<!-- Gráfica de asistencia semanal -->
+<div class="bg-white rounded-xl border border-gray-100 p-5 mb-6">
+  <h2 class="text-sm font-semibold text-gray-800 mb-4">Asistencia de la semana</h2>
+  <div class="flex items-end gap-4 h-32">
+    <div *ngFor="let d of weekData"
+         class="flex-1 flex flex-col items-center gap-1">
+      <span class="text-xs text-gray-400">{{ d.present }}</span>
+      <div class="w-full flex flex-col-reverse gap-0.5">
+        <div class="w-full bg-indigo-500 rounded-t"
+             [style.height.px]="(d.present / maxPresent) * 80"></div>
+        <div class="w-full bg-red-200 rounded-t"
+             [style.height.px]="(d.absent / maxPresent) * 80"></div>
+      </div>
+      <span class="text-xs text-gray-500 font-medium">{{ d.day }}</span>
+    </div>
+  </div>
+  <div class="flex items-center gap-4 mt-3">
+    <div class="flex items-center gap-1.5">
+      <div class="w-3 h-3 bg-indigo-500 rounded-sm"></div>
+      <span class="text-xs text-gray-500">Presentes</span>
+    </div>
+    <div class="flex items-center gap-1.5">
+      <div class="w-3 h-3 bg-red-200 rounded-sm"></div>
+      <span class="text-xs text-gray-500">Ausentes</span>
+    </div>
   </div>
 </div>
 
+<!-- Buscador y filtros -->
 <div class="bg-white rounded-xl border border-gray-100 p-5">
-  <div class="flex items-center justify-between mb-4">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
     <h2 class="text-sm font-semibold text-gray-800">Asistencia de hoy — 3ro "A"</h2>
-    <button class="text-xs text-indigo-600 hover:underline">Ver todos</button>
+    <div class="flex items-center gap-2">
+
+      <!-- Búsqueda -->
+      <input
+        type="text"
+        placeholder="Buscar estudiante..."
+        [value]="searchTerm()"
+        (input)="searchTerm.set($any($event.target).value)"
+        class="text-xs px-3 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 w-44"/>
+
+      <!-- Filtro por estado -->
+      <select
+        [value]="filterStatus()"
+        (change)="filterStatus.set($any($event.target).value)"
+        class="text-xs px-3 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+        <option>Todos</option>
+        <option>Presente</option>
+        <option>Ausente</option>
+      </select>
+
+    </div>
   </div>
+
+  <!-- Contador de resultados -->
+  <p class="text-xs text-gray-400 mb-3">
+    Mostrando {{ filteredStudents().length }} de {{ totalStudents() }} estudiantes
+  </p>
+
+  <!-- Tabla -->
   <table class="w-full text-sm">
     <thead>
       <tr class="text-left text-xs text-gray-400 border-b border-gray-50">
@@ -23,7 +97,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let s of students" class="border-b border-gray-50 last:border-0">
+      <tr *ngFor="let s of filteredStudents()"
+          class="border-b border-gray-50 last:border-0">
         <td class="py-3 text-gray-700 font-medium">{{ s.name }}</td>
         <td class="py-3">
           <span class="px-2 py-0.5 rounded-full text-xs font-medium"
@@ -34,6 +109,13 @@
           </span>
         </td>
         <td class="py-3 text-gray-400">{{ s.time }}</td>
+      </tr>
+
+      <!-- Sin resultados -->
+      <tr *ngIf="filteredStudents().length === 0">
+        <td colspan="3" class="py-8 text-center text-sm text-gray-400">
+          No se encontraron estudiantes
+        </td>
       </tr>
     </tbody>
   </table>

@@ -6,4 +6,8 @@ import { Component } from '@angular/core';
   imports: [],
   templateUrl: './header.html',
 })
-export class HeaderComponent {}
+export class HeaderComponent {
+  today = new Date().toLocaleDateString('es-ES', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+}
