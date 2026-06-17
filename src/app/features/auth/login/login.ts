@@ -13,11 +13,22 @@ export class LoginComponent {
   username = '';
   password = '';
   rol: 'docente' | 'representante' = 'docente';
+  errorMessage = '';
 
   constructor(private router: Router) {}
 
   onLogin() {
-    if (!this.username || !this.password) return;
+    if (!this.username || !this.password) {
+      this.errorMessage = 'Por favor completa todos los campos.';
+      return;
+    }
+
+    // Token simulado hasta conectar el backend
+    localStorage.setItem('auth_token', 'fake-token-123');
+    localStorage.setItem('auth_user', JSON.stringify({
+      username: this.username,
+      roles: this.rol === 'docente' ? ['ROLE_PROFESOR'] : ['ROLE_PADRE']
+    }));
 
     if (this.rol === 'docente') {
       this.router.navigate(['/teacher/dashboard']);
