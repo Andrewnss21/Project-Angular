@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 
@@ -10,11 +10,12 @@ import { RouterModule, Router } from '@angular/router';
 })
 export class SidebarComponent {
 
+  menuOpen = signal(false);
+
   constructor(private router: Router) {}
 
   get isTeacher(): boolean {
-    const url = this.router.url;
-    return url.startsWith('/teacher');
+    return this.router.url.startsWith('/teacher');
   }
 
   get navItems() {
@@ -30,5 +31,32 @@ export class SidebarComponent {
         { icon: '📊', label: 'Dashboard', route: '/parent/dashboard' },
       ];
     }
+  }
+
+  get currentUser() {
+    const stored = localStorage.getItem('auth_user');
+    if (stored) {
+      const user = JSON.parse(stored);
+      return {
+        name: user.username || 'Usuario',
+        role: this.isTeacher ? 'Docente' : 'Representante'
+      };
+    }
+    return { name: 'Usuario', role: this.isTeacher ? 'Docente' : 'Representante' };
+  }
+
+  get initials(): string {
+    const name = this.currentUser.name;
+    return name.substring(0, 2).toUpperCase();
+  }
+
+  toggleMenu() {
+    this.menuOpen.update(v => !v);
+  }
+
+  logout() {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
+    this.router.navigate(['/login']);
   }
 }

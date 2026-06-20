@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
+import { teacherGuard, parentGuard } from './core/guards/role.guard';
 import { LoginComponent } from './features/auth/login/login';
 import { MainLayoutComponent } from './layout/main-layout/main-layout';
 import { TeacherDashboardComponent } from './features/teacher/dashboard/dashboard';
@@ -14,7 +15,7 @@ export const routes: Routes = [
   {
     path: 'teacher',
     component: MainLayoutComponent,
-    canActivate: [authGuard],
+    canActivate: [authGuard, teacherGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard',  component: TeacherDashboardComponent },
@@ -26,7 +27,7 @@ export const routes: Routes = [
   {
     path: 'parent',
     component: MainLayoutComponent,
-    canActivate: [authGuard],
+    canActivate: [authGuard, parentGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: ParentDashboardComponent },
