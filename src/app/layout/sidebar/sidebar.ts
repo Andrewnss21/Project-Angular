@@ -1,6 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
+
+interface NavItem {
+  icon: string;
+  label: string;
+  route: string;
+}
 
 @Component({
   selector: 'app-sidebar',
@@ -14,11 +20,24 @@ export class SidebarComponent {
 
   constructor(private router: Router) {}
 
-  get isTeacher(): boolean {
-    return this.router.url.startsWith('/teacher');
+  private getUserFromStorage() {
+    const stored = localStorage.getItem('auth_user');
+    return stored ? JSON.parse(stored) : null;
   }
 
-  get navItems() {
+  get isTeacher(): boolean {
+    const user = this.getUserFromStorage();
+    if (!user) return false;
+    return user.roles.includes('ROLE_PROFESOR') || user.roles.includes('ROLE_ADMIN');
+  }
+
+  get isParent(): boolean {
+    const user = this.getUserFromStorage();
+    if (!user) return false;
+    return user.roles.includes('ROLE_PADRE');
+  }
+
+  get navItems(): NavItem[] {
     if (this.isTeacher) {
       return [
         { icon: '📊', label: 'Dashboard',      route: '/teacher/dashboard'  },
@@ -26,28 +45,28 @@ export class SidebarComponent {
         { icon: '📝', label: 'Calificaciones', route: '/teacher/grades'     },
         { icon: '👥', label: 'Estudiantes',    route: '/teacher/students'   },
       ];
-    } else {
+    }
+
+    if (this.isParent) {
       return [
-        { icon: '📊', label: 'Dashboard', route: '/parent/dashboard' },
+        { icon: '📊', label: 'Mi Dashboard', route: '/parent/dashboard' },
       ];
     }
+
+    return [];
   }
 
   get currentUser() {
-    const stored = localStorage.getItem('auth_user');
-    if (stored) {
-      const user = JSON.parse(stored);
-      return {
-        name: user.username || 'Usuario',
-        role: this.isTeacher ? 'Docente' : 'Representante'
-      };
-    }
-    return { name: 'Usuario', role: this.isTeacher ? 'Docente' : 'Representante' };
+    const user = this.getUserFromStorage();
+    if (!user) return { name: 'Usuario', role: 'Sin rol' };
+    return {
+      name: user.username || 'Usuario',
+      role: this.isTeacher ? 'Docente' : this.isParent ? 'Representante' : 'Usuario'
+    };
   }
 
   get initials(): string {
-    const name = this.currentUser.name;
-    return name.substring(0, 2).toUpperCase();
+    return this.currentUser.name.substring(0, 2).toUpperCase();
   }
 
   toggleMenu() {
