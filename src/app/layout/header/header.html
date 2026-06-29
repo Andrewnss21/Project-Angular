@@ -1,15 +1,53 @@
-<header class="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-  <div>
-    <h1 class="text-lg font-semibold text-gray-800">Dashboard</h1>
-    <p class="text-xs text-gray-400">{{ today }}</p>
+<header class="bg-white border-b border-gray-100 px-6 py-3 flex items-center justify-between gap-4">
+
+  <!-- Título -->
+  <div class="min-w-0">
+    <h1 class="text-base font-bold text-gray-800">{{ pageTitle }}</h1>
+    <p class="text-xs text-gray-400 capitalize">{{ today }}</p>
   </div>
-  <div class="flex items-center gap-4">
-    <button class="relative text-gray-400 hover:text-gray-600 transition-colors">
-      <span class="text-xl">🔔</span>
-      <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-    </button>
-    <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-      <span class="text-indigo-700 text-xs font-semibold">MA</span>
+
+  <!-- Barra de búsqueda -->
+  <div class="flex-1 max-w-md hidden sm:block">
+    <div class="relative">
+      <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/>
+      </svg>
+      <input
+        type="text"
+        placeholder="Buscar estudiantes, docentes..."
+        class="w-full pl-9 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition"/>
     </div>
+  </div>
+
+  <!-- Acciones -->
+  <div class="flex items-center gap-3">
+
+    <!-- Notificaciones -->
+    <button class="relative w-9 h-9 bg-gray-50 rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-100 transition">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+      </svg>
+      <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+    </button>
+
+    <!-- Mensajes -->
+    <button class="relative w-9 h-9 bg-gray-50 rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-100 transition">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+      </svg>
+      <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-indigo-500 rounded-full"></span>
+    </button>
+
+    <!-- Avatar -->
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 bg-indigo-600 rounded-full flex items-center justify-center">
+        <span class="text-white text-xs font-bold">{{ initials }}</span>
+      </div>
+      <div class="hidden sm:block">
+        <p class="text-sm font-semibold text-gray-800 leading-tight">{{ username }}</p>
+        <p class="text-xs text-gray-400">{{ role }}</p>
+      </div>
+    </div>
+
   </div>
 </header>
