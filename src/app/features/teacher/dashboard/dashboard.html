@@ -1,32 +1,59 @@
-<!-- Tarjetas de métricas dinámicas -->
+<!-- Tarjetas de métricas -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
-  <div class="bg-white rounded-xl border border-gray-100 p-5">
-    <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Total estudiantes</p>
-    <p class="text-2xl font-semibold text-gray-800 mt-1">{{ totalStudents() }}</p>
+  <div class="bg-white rounded-2xl border border-gray-100 p-5">
+    <div class="flex items-center justify-between mb-3">
+      <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Total estudiantes</p>
+      <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </div>
+    </div>
+    <p class="text-3xl font-bold text-gray-800">{{ totalStudents() }}</p>
     <p class="text-xs mt-1 text-gray-400">Curso 3ro "A"</p>
   </div>
 
-  <div class="bg-white rounded-xl border border-gray-100 p-5">
-    <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Presentes hoy</p>
-    <p class="text-2xl font-semibold text-gray-800 mt-1">{{ presentToday() }}</p>
-    <p class="text-xs mt-1 text-green-500">{{ attendanceRate() }}% de asistencia</p>
+  <div class="bg-white rounded-2xl border border-gray-100 p-5">
+    <div class="flex items-center justify-between mb-3">
+      <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Presentes hoy</p>
+      <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+    </div>
+    <p class="text-3xl font-bold text-gray-800">{{ presentToday() }}</p>
+    <p class="text-xs mt-1 text-green-500 font-medium">↑ {{ attendanceRate() }}% de asistencia</p>
   </div>
 
-  <div class="bg-white rounded-xl border border-gray-100 p-5">
-    <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Ausentes hoy</p>
-    <p class="text-2xl font-semibold text-gray-800 mt-1">{{ absentToday() }}</p>
-    <p class="text-xs mt-1 text-red-400">{{ 100 - attendanceRate() }}% inasistencia</p>
+  <div class="bg-white rounded-2xl border border-gray-100 p-5">
+    <div class="flex items-center justify-between mb-3">
+      <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Ausentes hoy</p>
+      <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </div>
+    </div>
+    <p class="text-3xl font-bold text-gray-800">{{ absentToday() }}</p>
+    <p class="text-xs mt-1 text-red-400 font-medium">↓ {{ 100 - attendanceRate() }}% inasistencia</p>
   </div>
 
-  <div class="bg-white rounded-xl border border-gray-100 p-5">
-    <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Promedio general</p>
-    <p class="text-2xl font-semibold text-gray-800 mt-1">8.4</p>
-    <p class="text-xs mt-1 text-green-500">↑ 0.2 vs mes anterior</p>
+  <div class="bg-white rounded-2xl border border-gray-100 p-5">
+    <div class="flex items-center justify-between mb-3">
+      <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Promedio general</p>
+      <div class="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+      </div>
+    </div>
+    <p class="text-3xl font-bold text-gray-800">8.4</p>
+    <p class="text-xs mt-1 text-green-500 font-medium">↑ 0.2 vs mes anterior</p>
   </div>
 
 </div>
-
 <!-- Acciones rápidas -->
 <div class="bg-white rounded-xl border border-gray-100 p-5 mb-6">
   <h2 class="text-sm font-semibold text-gray-800 mb-4">Acciones Rápidas</h2>
@@ -90,29 +117,72 @@
 </div>
 
 <!-- Gráfica de asistencia semanal -->
-<div class="bg-white rounded-xl border border-gray-100 p-5 mb-6">
-  <h2 class="text-sm font-semibold text-gray-800 mb-4">Asistencia de la semana</h2>
-  <div class="flex items-end gap-4 h-32">
-    <div *ngFor="let d of weekData"
-         class="flex-1 flex flex-col items-center gap-1">
-      <span class="text-xs text-gray-400">{{ d.present }}</span>
-      <div class="w-full flex flex-col-reverse gap-0.5">
-        <div class="w-full bg-indigo-500 rounded-t"
-             [style.height.px]="(d.present / maxPresent) * 80"></div>
-        <div class="w-full bg-red-200 rounded-t"
-             [style.height.px]="(d.absent / maxPresent) * 80"></div>
+<div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <h2 class="text-base font-semibold text-gray-800">Asistencia Semanal</h2>
+      <p class="text-xs text-gray-400 mt-0.5">Resumen de presentes y ausentes</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-1.5">
+        <div class="w-2.5 h-2.5 bg-indigo-500 rounded-full"></div>
+        <span class="text-xs text-gray-500">Presentes</span>
       </div>
-      <span class="text-xs text-gray-500 font-medium">{{ d.day }}</span>
+      <div class="flex items-center gap-1.5">
+        <div class="w-2.5 h-2.5 bg-purple-300 rounded-full"></div>
+        <span class="text-xs text-gray-500">Ausentes</span>
+      </div>
     </div>
   </div>
-  <div class="flex items-center gap-4 mt-3">
-    <div class="flex items-center gap-1.5">
-      <div class="w-3 h-3 bg-indigo-500 rounded-sm"></div>
-      <span class="text-xs text-gray-500">Presentes</span>
-    </div>
-    <div class="flex items-center gap-1.5">
-      <div class="w-3 h-3 bg-red-200 rounded-sm"></div>
-      <span class="text-xs text-gray-500">Ausentes</span>
+
+  <div class="relative w-full">
+    <svg viewBox="0 0 760 260" class="w-full" style="height: 260px;" preserveAspectRatio="none">
+
+      <!-- Líneas de cuadrícula horizontales -->
+      <line *ngFor="let g of gridLines" x1="50" [attr.x2]="730" [attr.y1]="g.y" [attr.y2]="g.y" stroke="#f1f1f4" stroke-width="1"/>
+
+      <!-- Etiquetas eje Y -->
+      <text *ngFor="let g of gridLines" x="40" [attr.y]="g.y + 4" font-size="11" fill="#9ca3af" text-anchor="end">{{ g.label }}</text>
+
+      <!-- Área rellena bajo presentes -->
+      <path [attr.d]="presentAreaPath" fill="#6366f1" opacity="0.10"/>
+
+      <!-- Área rellena bajo ausentes -->
+      <path [attr.d]="absentAreaPath" fill="#a78bfa" opacity="0.10"/>
+
+      <!-- Línea de ausentes -->
+      <path [attr.d]="absentLinePath" fill="none" stroke="#c4b5fd" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Línea de presentes -->
+      <path [attr.d]="presentLinePath" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Puntos interactivos -->
+      <g *ngFor="let p of presentPoints; let i = index">
+        <!-- Zona invisible más grande para detectar hover fácil -->
+        <rect [attr.x]="p.x - 35" y="0" width="70" height="260" fill="transparent"
+              (mouseenter)="hoverIndex.set(i)" (mouseleave)="hoverIndex.set(null)"/>
+
+        <!-- Línea vertical guía al pasar el mouse -->
+        <line *ngIf="hoverIndex() === i" [attr.x1]="p.x" [attr.x2]="p.x" y1="10" y2="220" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
+
+        <circle [attr.cx]="p.x" [attr.cy]="p.y" [attr.r]="hoverIndex() === i ? 6 : 4" fill="#6366f1" class="transition-all"/>
+        <circle [attr.cx]="absentPoints[i].x" [attr.cy]="absentPoints[i].y" [attr.r]="hoverIndex() === i ? 6 : 4" fill="#c4b5fd" class="transition-all"/>
+      </g>
+
+      <!-- Etiquetas eje X -->
+      <text *ngFor="let p of presentPoints; let i = index" [attr.x]="p.x" y="245" font-size="12" fill="#6b7280" text-anchor="middle" font-weight="500">
+        {{ weekData[i].day }}
+      </text>
+    </svg>
+
+    <!-- Tooltip flotante -->
+    <div *ngIf="hoverIndex() !== null"
+         class="absolute bg-gray-800 text-white text-xs rounded-lg px-3 py-2 pointer-events-none shadow-lg transition-all"
+         [style.left.px]="tooltipX()"
+         [style.top.px]="tooltipY()">
+      <p class="font-semibold mb-1">{{ weekData[hoverIndex()!].day }}</p>
+      <p class="flex items-center gap-1.5"><span class="w-2 h-2 bg-indigo-400 rounded-full"></span> Presentes: {{ weekData[hoverIndex()!].present }}</p>
+      <p class="flex items-center gap-1.5"><span class="w-2 h-2 bg-purple-300 rounded-full"></span> Ausentes: {{ weekData[hoverIndex()!].absent }}</p>
     </div>
   </div>
 </div>

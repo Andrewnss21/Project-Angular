@@ -14,7 +14,7 @@ export class TeacherDashboardComponent {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
 
-  // Lista de estudiantes como signal (reactivo)
+  // Lista de estudiantes
   students = signal([
     { id: 1, name: 'Ana Torres',      status: 'Presente' as 'Presente'|'Ausente', time: '07:45' },
     { id: 2, name: 'Luis Mendoza',    status: 'Presente' as 'Presente'|'Ausente', time: '07:48' },
@@ -26,7 +26,7 @@ export class TeacherDashboardComponent {
     { id: 8, name: 'Mateo Jiménez',   status: 'Ausente'  as 'Presente'|'Ausente', time: '—'     },
   ]);
 
-  // Métricas calculadas automáticamente
+  // Métricas calculadas
   totalStudents  = computed(() => this.students().length);
   presentToday   = computed(() => this.students().filter(s => s.status === 'Presente').length);
   absentToday    = computed(() => this.students().filter(s => s.status === 'Ausente').length);
@@ -36,7 +36,6 @@ export class TeacherDashboardComponent {
   searchTerm  = signal('');
   filterStatus = signal<'Todos' | 'Presente' | 'Ausente'>('Todos');
 
-  // Lista filtrada
   filteredStudents = computed(() => {
     return this.students().filter(s => {
       const matchesSearch = s.name.toLowerCase().includes(this.searchTerm().toLowerCase());
@@ -45,7 +44,7 @@ export class TeacherDashboardComponent {
     });
   });
 
-  // Datos para la gráfica (asistencia de la semana)
+  // Datos para la gráfica
   weekData = [
     { day: 'Lun', present: 26, absent: 2 },
     { day: 'Mar', present: 24, absent: 4 },
@@ -55,4 +54,77 @@ export class TeacherDashboardComponent {
   ];
 
   maxPresent = Math.max(...this.weekData.map(d => d.present));
+
+  // ===== Lógica de la gráfica SVG =====
+
+  hoverIndex = signal<number | null>(null);
+
+  private chartLeft = 50;
+  private chartRight = 730;
+  private chartTop = 20;
+  private chartBottom = 220;
+
+  private getX(index: number): number {
+    const step = (this.chartRight - this.chartLeft) / (this.weekData.length - 1);
+    return this.chartLeft + step * index;
+  }
+
+  private getY(value: number): number {
+    const scale = (this.chartBottom - this.chartTop) / this.maxPresent;
+    return this.chartBottom - (value * scale);
+  }
+
+  get gridLines() {
+    const steps = 5;
+    return Array.from({ length: steps }, (_, i) => {
+      const value = Math.round((this.maxPresent / (steps - 1)) * (steps - 1 - i));
+      return { y: this.chartTop + ((this.chartBottom - this.chartTop) / (steps - 1)) * i, label: value };
+    });
+  }
+
+  get presentPoints() {
+    return this.weekData.map((d, i) => ({ x: this.getX(i), y: this.getY(d.present) }));
+  }
+
+  get absentPoints() {
+    return this.weekData.map((d, i) => ({ x: this.getX(i), y: this.getY(d.absent) }));
+  }
+
+  private toPath(points: { x: number; y: number }[]): string {
+    return points.map((p, i) => (i === 0 ? 'M' : 'L') + p.x + ' ' + p.y).join(' ');
+  }
+
+  get presentLinePath(): string {
+    return this.toPath(this.presentPoints);
+  }
+
+  get absentLinePath(): string {
+    return this.toPath(this.absentPoints);
+  }
+
+  get presentAreaPath(): string {
+    const points = this.presentPoints;
+    const first = points[0];
+    const last = points[points.length - 1];
+    return `${this.toPath(points)} L ${last.x} ${this.chartBottom} L ${first.x} ${this.chartBottom} Z`;
+  }
+
+  get absentAreaPath(): string {
+    const points = this.absentPoints;
+    const first = points[0];
+    const last = points[points.length - 1];
+    return `${this.toPath(points)} L ${last.x} ${this.chartBottom} L ${first.x} ${this.chartBottom} Z`;
+  }
+
+  tooltipX = computed(() => {
+    const i = this.hoverIndex();
+    if (i === null) return 0;
+    return (this.presentPoints[i].x / 760) * 100;
+  });
+
+  tooltipY = computed(() => {
+    const i = this.hoverIndex();
+    if (i === null) return 0;
+    return ((this.presentPoints[i].y - 60) / 260) * 100;
+  });
 }
