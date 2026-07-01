@@ -135,120 +135,79 @@
     </div>
   </div>
 
-  <div class="relative w-full">
-    <svg viewBox="0 0 760 260" class="w-full" style="height: 260px;" preserveAspectRatio="none">
+  <div class="relative w-full select-none" style="min-height: 320px;"
+       (mousemove)="onChartMouseMove($event)"
+       (mouseleave)="hoverIndex.set(null)">
 
-      <!-- Líneas de cuadrícula horizontales -->
-      <line *ngFor="let g of gridLines" x1="50" [attr.x2]="730" [attr.y1]="g.y" [attr.y2]="g.y" stroke="#f1f1f4" stroke-width="1"/>
+    <svg viewBox="0 0 760 280" class="w-full" style="min-height: 300px; height: auto;">
+
+      <!-- Líneas de cuadrícula -->
+      <line *ngFor="let g of gridLines" x1="50" [attr.x2]="730"
+            [attr.y1]="g.y" [attr.y2]="g.y" stroke="#f1f5f9" stroke-width="1"/>
 
       <!-- Etiquetas eje Y -->
-      <text *ngFor="let g of gridLines" x="40" [attr.y]="g.y + 4" font-size="11" fill="#9ca3af" text-anchor="end">{{ g.label }}</text>
+      <text *ngFor="let g of gridLines" x="40" [attr.y]="g.y + 4"
+            font-size="11" fill="#94a3b8" text-anchor="end">{{ g.label }}</text>
 
-      <!-- Área rellena bajo presentes -->
-      <path [attr.d]="presentAreaPath" fill="#6366f1" opacity="0.10"/>
+      <!-- Área rellena ausentes -->
+      <path [attr.d]="absentAreaPath" fill="#a78bfa" opacity="0.08"/>
 
-      <!-- Área rellena bajo ausentes -->
-      <path [attr.d]="absentAreaPath" fill="#a78bfa" opacity="0.10"/>
+      <!-- Área rellena presentes -->
+      <path [attr.d]="presentAreaPath" fill="#6366f1" opacity="0.12"/>
 
-      <!-- Línea de ausentes -->
-      <path [attr.d]="absentLinePath" fill="none" stroke="#c4b5fd" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Línea ausentes -->
+      <path [attr.d]="absentLinePath" fill="none" stroke="#c4b5fd"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 
-      <!-- Línea de presentes -->
-      <path [attr.d]="presentLinePath" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Línea presentes -->
+      <path [attr.d]="presentLinePath" fill="none" stroke="#6366f1"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 
-      <!-- Puntos interactivos -->
+      <!-- Línea vertical al hacer hover -->
+      <line *ngIf="hoverIndex() !== null"
+            [attr.x1]="presentPoints[hoverIndex()!].x"
+            [attr.x2]="presentPoints[hoverIndex()!].x"
+            y1="20" y2="235"
+            stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+      <!-- Puntos -->
       <g *ngFor="let p of presentPoints; let i = index">
-        <!-- Zona invisible más grande para detectar hover fácil -->
-        <rect [attr.x]="p.x - 35" y="0" width="70" height="260" fill="transparent"
-              (mouseenter)="hoverIndex.set(i)" (mouseleave)="hoverIndex.set(null)"/>
-
-        <!-- Línea vertical guía al pasar el mouse -->
-        <line *ngIf="hoverIndex() === i" [attr.x1]="p.x" [attr.x2]="p.x" y1="10" y2="220" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
-
-        <circle [attr.cx]="p.x" [attr.cy]="p.y" [attr.r]="hoverIndex() === i ? 6 : 4" fill="#6366f1" class="transition-all"/>
-        <circle [attr.cx]="absentPoints[i].x" [attr.cy]="absentPoints[i].y" [attr.r]="hoverIndex() === i ? 6 : 4" fill="#c4b5fd" class="transition-all"/>
+        <circle [attr.cx]="p.x" [attr.cy]="p.y"
+                [attr.r]="hoverIndex() === i ? 6 : 4"
+                [attr.fill]="hoverIndex() === i ? '#4f46e5' : '#6366f1'"
+                [attr.stroke]="hoverIndex() === i ? 'white' : 'none'"
+                [attr.stroke-width]="2"/>
+        <circle [attr.cx]="absentPoints[i].x" [attr.cy]="absentPoints[i].y"
+                [attr.r]="hoverIndex() === i ? 6 : 4"
+                [attr.fill]="hoverIndex() === i ? '#9333ea' : '#c4b5fd'"
+                [attr.stroke]="hoverIndex() === i ? 'white' : 'none'"
+                [attr.stroke-width]="2"/>
       </g>
 
       <!-- Etiquetas eje X -->
-      <text *ngFor="let p of presentPoints; let i = index" [attr.x]="p.x" y="245" font-size="12" fill="#6b7280" text-anchor="middle" font-weight="500">
+      <text *ngFor="let p of presentPoints; let i = index"
+            [attr.x]="p.x" y="265"
+            font-size="12" fill="#64748b" text-anchor="middle" font-weight="500">
         {{ weekData[i].day }}
       </text>
+
     </svg>
 
-    <!-- Tooltip flotante -->
+    <!-- Tooltip siguiendo el mouse -->
     <div *ngIf="hoverIndex() !== null"
-         class="absolute bg-gray-800 text-white text-xs rounded-lg px-3 py-2 pointer-events-none shadow-lg transition-all"
-         [style.left.px]="tooltipX()"
-         [style.top.px]="tooltipY()">
-      <p class="font-semibold mb-1">{{ weekData[hoverIndex()!].day }}</p>
-      <p class="flex items-center gap-1.5"><span class="w-2 h-2 bg-indigo-400 rounded-full"></span> Presentes: {{ weekData[hoverIndex()!].present }}</p>
-      <p class="flex items-center gap-1.5"><span class="w-2 h-2 bg-purple-300 rounded-full"></span> Ausentes: {{ weekData[hoverIndex()!].absent }}</p>
+         class="absolute pointer-events-none z-20 bg-gray-900 text-white rounded-xl shadow-2xl px-4 py-3 text-xs min-w-[140px]"
+         [style.left.px]="mouseX + 16"
+         [style.top.px]="mouseY - 20">
+      <p class="font-bold text-indigo-300 mb-2">{{ weekData[hoverIndex()!].day }}</p>
+      <div class="flex items-center gap-2 mb-1.5">
+        <span class="w-2 h-2 bg-indigo-400 rounded-full"></span>
+        <span>Presentes: <strong class="text-white">{{ weekData[hoverIndex()!].present }}</strong></span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 bg-purple-300 rounded-full"></span>
+        <span>Ausentes: <strong class="text-white">{{ weekData[hoverIndex()!].absent }}</strong></span>
+      </div>
     </div>
+
   </div>
-</div>
-
-<!-- Buscador y filtros -->
-<div class="bg-white rounded-xl border border-gray-100 p-5">
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-    <h2 class="text-sm font-semibold text-gray-800">Asistencia de hoy — 3ro "A"</h2>
-    <div class="flex items-center gap-2">
-
-      <!-- Búsqueda -->
-      <input
-        type="text"
-        placeholder="Buscar estudiante..."
-        [value]="searchTerm()"
-        (input)="searchTerm.set($any($event.target).value)"
-        class="text-xs px-3 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 w-44"/>
-
-      <!-- Filtro por estado -->
-      <select
-        [value]="filterStatus()"
-        (change)="filterStatus.set($any($event.target).value)"
-        class="text-xs px-3 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-400">
-        <option>Todos</option>
-        <option>Presente</option>
-        <option>Ausente</option>
-      </select>
-
-    </div>
-  </div>
-
-  <!-- Contador de resultados -->
-  <p class="text-xs text-gray-400 mb-3">
-    Mostrando {{ filteredStudents().length }} de {{ totalStudents() }} estudiantes
-  </p>
-
-  <!-- Tabla -->
-  <table class="w-full text-sm">
-    <thead>
-      <tr class="text-left text-xs text-gray-400 border-b border-gray-50">
-        <th class="pb-3 font-medium">Estudiante</th>
-        <th class="pb-3 font-medium">Estado</th>
-        <th class="pb-3 font-medium">Hora</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let s of filteredStudents()"
-          class="border-b border-gray-50 last:border-0">
-        <td class="py-3 text-gray-700 font-medium">{{ s.name }}</td>
-        <td class="py-3">
-          <span class="px-2 py-0.5 rounded-full text-xs font-medium"
-                [class]="s.status === 'Presente'
-                  ? 'bg-green-50 text-green-700'
-                  : 'bg-red-50 text-red-600'">
-            {{ s.status }}
-          </span>
-        </td>
-        <td class="py-3 text-gray-400">{{ s.time }}</td>
-      </tr>
-
-      <!-- Sin resultados -->
-      <tr *ngIf="filteredStudents().length === 0">
-        <td colspan="3" class="py-8 text-center text-sm text-gray-400">
-          No se encontraron estudiantes
-        </td>
-      </tr>
-    </tbody>
-  </table>
 </div>

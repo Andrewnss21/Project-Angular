@@ -116,15 +116,46 @@ export class TeacherDashboardComponent {
     return `${this.toPath(points)} L ${last.x} ${this.chartBottom} L ${first.x} ${this.chartBottom} Z`;
   }
 
-  tooltipX = computed(() => {
-    const i = this.hoverIndex();
-    if (i === null) return 0;
-    return (this.presentPoints[i].x / 760) * 100;
-  });
-
+tooltipX = computed(() => {
+  const i = this.hoverIndex();
+  if (i === null) return 0;
+  // Posición X como porcentaje del ancho total del SVG (viewBox 760)
+  const x = this.presentPoints[i].x;
+  return ((x - 50) / (730 - 50)) * 100;
+});
   tooltipY = computed(() => {
     const i = this.hoverIndex();
     if (i === null) return 0;
     return ((this.presentPoints[i].y - 60) / 260) * 100;
   });
+
+  mouseX = 0;
+mouseY = 0;
+
+onChartMouseMove(event: MouseEvent) {
+  const target = event.currentTarget as HTMLElement;
+  const rect = target.getBoundingClientRect();
+
+  // Posición del mouse relativa al contenedor
+  this.mouseX = event.clientX - rect.left;
+  this.mouseY = event.clientY - rect.top;
+
+  // Determinar qué punto está más cercano al mouse
+  const svgWidth = rect.width;
+  const relativeX = (event.clientX - rect.left) / svgWidth;
+  const svgX = 50 + relativeX * (730 - 50);
+
+  // Encontrar el índice más cercano
+  let closestIndex = 0;
+  let minDistance = Infinity;
+  this.presentPoints.forEach((p, i) => {
+    const dist = Math.abs(p.x - svgX);
+    if (dist < minDistance) {
+      minDistance = dist;
+      closestIndex = i;
+    }
+  });
+
+  this.hoverIndex.set(closestIndex);
+}
 }
